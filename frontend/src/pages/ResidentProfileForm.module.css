@@ -1,0 +1,99 @@
+/* Container for the profile form */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    min-height: 100vh;
+    background-color: #f0f5f1;
+    padding: 40px 20px;
+  }
+  
+  /* Form structure */
+  .form {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .heading {
+    font-size: 26px;
+    font-weight: bold;
+    color: #185233;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Adjust the form row to be horizontal */
+  .formRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .formLabel {
+    flex-basis: 20%;
+    font-size: 16px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .formField {
+    flex-basis: 75%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .formField:focus {
+    border-color: #77c23e;
+  }
+  
+  /* Full-width button */
+  .formActions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .formSubmitBtn {
+    background-color: #185233;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .formSubmitBtn:hover {
+    background-color: #77c23e;
+  }
+  
+  .error, .success {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  
+  .error {
+    color: #ff4c4c;
+  }
+  
+  .success {
+    color: #2ecc71;
+  }
+  

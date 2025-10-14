@@ -1,0 +1,70 @@
+.admin-resource-allocation {
+    padding: 20px;
+}
+
+.title {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.allocate-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-bottom: 20px;
+}
+
+.allocate-button:hover {
+    background-color: #218838;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.resource-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.resource-table th,
+.resource-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.resource-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.resource-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.resource-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.resource-table td {
+    font-size: 0.9em;
+    color: #333;
+}

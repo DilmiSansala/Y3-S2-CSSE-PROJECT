@@ -1,0 +1,98 @@
+/* AdminDashboard.css */
+
+/* Hero Section */
+.hero-section {
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 200px;
+    position: relative;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.action-button {
+    background-color: #38a169;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+    background-color: #2f855a;
+}
+
+.dashboard-widgets {
+    display: grid;
+    gap: 2rem;
+}
+
+.widget {
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.dashboard-widgets .widget {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.widget h2 {
+    margin-top: 1.5rem;
+}
+
+.widget p {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.widget-icon {
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    opacity: 0.1;
+}
+
+/* Recent Activities */
+.recent-activities {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recent-activities h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.recent-activities ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+.widget:hover {
+    transform: translateY(-5px);
+    /* Subtle lift on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    /* Larger shadow on hover */
+}
+
+.recent-activities ul li {
+    font-size: 1rem;
+    line-height: 1.5;
+}

@@ -1,0 +1,87 @@
+.admin-peak-monitoring {
+    padding: 20px;
+}
+
+.title {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.dropdown-container {
+    margin-bottom: 20px;
+}
+
+.dropdown-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.dropdown {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.no-data-message {
+    color: #6c757d;
+    font-size: 1.1em;
+    margin-top: 20px;
+}
+
+.chart-and-table-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.chart-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.peak-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.peak-table th,
+.peak-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.peak-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.peak-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.peak-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.peak-table td {
+    font-size: 0.9em;
+    color: #333;
+}

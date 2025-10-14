@@ -1,0 +1,12 @@
+@keyframes scan {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 100%;
+  }
+}
+
+.animate-scan-line {
+  animation: scan 1s infinite ease-in-out alternate;  /* Moves the line back and forth */
+}

@@ -1,0 +1,97 @@
+/* General styles */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #e7ece8; 
+    padding: 20px;
+  }
+  
+  .form {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #185233; 
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .formGroup {
+    margin-bottom: 15px;
+  }
+  
+  .formLabel {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  
+  .formField {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  .formField:focus {
+    border-color: #77c23e;
+  }
+  
+  .formActions {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .formSubmitBtn {
+    background-color: #185233; 
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    width: 100%;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .formSubmitBtn:hover {
+    background-color: #77c23e; 
+  }
+  
+  .error {
+    color: #ff4c4c; 
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  .registerLink {
+    text-align: right;
+    margin-top: 10px;
+  }
+  
+  .registerLinkText {
+    color: #185233; 
+    text-decoration: none;
+  }
+  
+  .registerLinkText:hover {
+    text-decoration: underline;
+  }
+  

@@ -1,0 +1,92 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 10px 20px;
+  position: fixed;
+  top: 0; 
+  left: 200px;
+  width: calc(100% - 200px); 
+  z-index: 1000; 
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.logo-and-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px; 
+}
+
+.logo {
+  width: 40px; 
+  height: auto;
+}
+
+.navbar {
+  display: flex;
+  gap: 50px;
+  font-weight: bold;
+  unicode-bidi: isolate;
+  margin-left: 770px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #185233;
+  font-size: 1.17em;
+  transition: color 0.3s;
+}
+
+.nav-link:hover {
+  color: #77c23e; 
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.notification-icon {
+  width: 30px; 
+  height: 30px;
+  cursor: pointer;
+}
+
+.notification-icon:hover {
+  background-color: #f1f1f1; 
+  border-radius: 5px; 
+}
+
+.sidebar-icon {
+  margin-right: 15px; 
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.search-bar {
+  flex-grow: 1; 
+}
+
+.search-bar input {
+  width: 35%; 
+  padding: 7px;
+  border-radius: 5px;
+  border: none;
+  padding-left: 17px;
+  outline: none;
+  font-size: 16px;
+  background-color: #ebebee;
+}
+
+.icons img {
+  width: 30px; 
+  height: 30px;
+  cursor: pointer;
+}
+
+.icons img:hover {
+  background-color: #f1f1f1;
+}
