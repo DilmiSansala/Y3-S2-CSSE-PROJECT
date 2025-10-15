@@ -13,7 +13,7 @@ exports.createWasteRequest = async (req, res) => {
         .json({ message: "Database connection is not established." });
     }
 
-    const { wasteType, quantity, collectionDate, collectionTime } = req.body;
+    const { wasteType, quantity, collectionDate, collectionTime,collectionCenter  } = req.body;
 
     // Validate request data
     if (!wasteType || !quantity || !collectionDate || !collectionTime) {
@@ -22,11 +22,12 @@ exports.createWasteRequest = async (req, res) => {
 
     // Create a new waste request
     const newWasteRequest = new WasteRequest({
-      resident: req.user.id,
-      wasteType,
-      quantity,
-      collectionDate,
-      collectionTime,
+       resident: req.user.id,
+  wasteType,
+  quantity: Number(quantity),             // ← cast to number
+  collectionCenter: collectionCenter || undefined, // ← store center id when sent
+  collectionDate,
+  collectionTime
     });
 
     await newWasteRequest.save();
@@ -198,34 +199,28 @@ exports.getAllRequest = async (req, res) => {
 
 // Get all pending requests by collection center (centerId as ObjectId)
 exports.getRequestsByCenter = async (req, res) => {
-  const { centerId } = req.params; // Extract centerId from request params
+  const { centerId } = req.params;
 
   try {
-    // Check if the centerId is provided in the request
     if (!centerId) {
       return res.status(400).json({ message: "Center ID is required." });
     }
 
-    // Convert centerId to ObjectId to match MongoDB ObjectId format (use 'new')
-    const centerObjectId = new mongoose.Types.ObjectId(centerId);
-
-    // Fetch all pending requests for the provided collection center
-    const pendingRequests = await WasteRequest.find({
-      collectionCenter: centerObjectId, // Match the center using ObjectId
-      status: "pending", // Only retrieve requests with 'pending' status
-    }).populate("resident"); // Populate resident details for each request
-
-    console.log(pendingRequests);
-
-    // If no pending requests found, return an appropriate message
-    if (pendingRequests.length === 0) {
-      return res.status(404).json({ message: "No pending requests found." });
+    // Support both legacy string and new ObjectId `collectionCenter`
+    const orList = [{ collectionCenter: centerId }];
+    if (mongoose.isValidObjectId(centerId)) {
+      orList.push({ collectionCenter: new mongoose.Types.ObjectId(centerId) });
     }
 
-    // Return the fetched pending requests
-    res.status(200).json(pendingRequests);
+    const pendingRequests = await WasteRequest.find({
+      $or: orList,
+      status: "pending",
+    }).populate("resident");
+
+    // ✅ 200, even when empty
+    return res.status(200).json(Array.isArray(pendingRequests) ? pendingRequests : []);
   } catch (error) {
     console.error("Error fetching pending requests:", error);
-    res.status(500).json({ message: "Error fetching pending requests." });
+    return res.status(500).json({ message: "Error fetching pending requests." });
   }
 };

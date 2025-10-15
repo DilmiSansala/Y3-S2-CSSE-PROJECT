@@ -82,38 +82,72 @@ exports.getWasteProgress = async (req, res) => {
 };
 
 // Update a waste request
+// Update a waste request (partial updates allowed)
 exports.updateWasteRequest = async (req, res) => {
   try {
     const { id } = req.params;
-    const { wasteType, quantity, collectionDate, collectionTime, status, collectionCenter } = req.body;
 
-    // Validate request data
-    if (!wasteType || !quantity || !collectionDate || !collectionTime || !collectionCenter) {
-      return res.status(400).json({ message: 'All fields are required, including collection center.' });
+    // Accept any subset of fields from the client
+    const {
+      wasteType,
+      quantity,
+      collectionDate,
+      collectionTime,
+      status,
+      collectionCenter
+    } = req.body;
+
+    // Build the update payload only with provided fields
+    const update = {};
+
+    if (typeof wasteType !== "undefined") update.wasteType = wasteType;
+
+    if (typeof quantity !== "undefined") {
+      const qn = Number(quantity);
+      if (!Number.isFinite(qn) || qn < 0) {
+        return res.status(400).json({ message: "quantity must be a non-negative number" });
+      }
+      update.quantity = qn;
     }
 
-    // Check if the provided collectionCenter is valid
-    const validCenter = await CollectionCenter.findById(collectionCenter);
-    if (!validCenter) {
-      return res.status(400).json({ message: 'Invalid collection center selected.' });
+    if (typeof collectionDate !== "undefined") update.collectionDate = collectionDate; // Mongoose will cast
+    if (typeof collectionTime !== "undefined") update.collectionTime = collectionTime;
+
+    if (typeof status !== "undefined") {
+      // optional: enforce your enum here if you want
+      update.status = status;
     }
 
-    const updatedRequest = await WasteRequest.findByIdAndUpdate(
-      id,
-      { wasteType, quantity, collectionDate, collectionTime, status, collectionCenter },
-      { new: true }
-    ).populate('collectionCenter'); // Populate collection center after update
+    if (typeof collectionCenter !== "undefined" && collectionCenter !== null && collectionCenter !== "") {
+      // Only validate center if the client tries to change it
+      const validCenter = await mongoose.model("CollectionCenter").findById(collectionCenter);
+      if (!validCenter) {
+        return res.status(400).json({ message: "Invalid collection center selected." });
+      }
+      update.collectionCenter = collectionCenter;
+    }
+
+    // If client sent nothing recognizable, bail out
+    if (Object.keys(update).length === 0) {
+      return res.status(400).json({ message: "No valid fields provided to update." });
+    }
+
+    const updatedRequest = await mongoose
+      .model("WasteRequest")
+      .findByIdAndUpdate(id, update, { new: true })
+      .populate("collectionCenter");
 
     if (!updatedRequest) {
-      return res.status(404).json({ message: 'Waste request not found.' });
+      return res.status(404).json({ message: "Waste request not found." });
     }
 
-    res.status(200).json(updatedRequest);
+    return res.status(200).json(updatedRequest);
   } catch (error) {
-    console.error('Error updating waste request:', error);
-    res.status(500).json({ message: 'Error updating waste request.', error });
+    console.error("Error updating waste request:", error);
+    return res.status(500).json({ message: "Error updating waste request.", error });
   }
 };
+
 
 // Delete a waste request
 exports.deleteWasteRequest = async (req, res) => {
