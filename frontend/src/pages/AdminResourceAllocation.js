@@ -50,25 +50,26 @@ const AdminResourceAllocation = () => {
         </button>
         <div className="table-container">
           <table className="resource-table">
-            <thead>
-              <tr>
-                <th>Center Name</th>
-                <th>Allocated Trucks</th>
-                <th>Allocated Staff</th>
-                <th>Total Quantity (kg)</th> {/* Add Total Quantity column */}
-              </tr>
-            </thead>
-            <tbody>
-              {centers.map((center) => (
-                <tr key={center._id}>
-                  <td>{center.name}</td>
-                  <td>{center.allocatedResources?.trucks || 0}</td>
-                  <td>{center.allocatedResources?.staff || 0}</td>
-                  <td>{center.allocatedResources?.totalQuantity || 0}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+  <thead>
+    <tr>
+      <th>Center Name</th>
+      <th>Allocated Trucks</th>
+      <th>Allocated Staff</th>
+      <th>Total Quantity (kg)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {centers.map(c => (
+      <tr key={c._id}>
+        <td>{c.name}</td>
+        <td>{c.allocatedResources?.trucks || 0}</td>
+        <td>{c.allocatedResources?.staff || 0}</td>
+        <td>{c.allocatedResources?.totalQuantity || 0}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
         </div>
       </div>
     </AdminDashboardLayout>
