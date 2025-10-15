@@ -11,8 +11,6 @@ router.put("/:id", collectionCenterController.updateCenter);
 router.delete("/:id", collectionCenterController.deleteCenter);
 
 router.get("/peak-monitoring", peakMonitoringController.getPeakMonitoring);
-router.post(
-  "/allocate-resources",
-  resourceAllocationController.allocateResources
-);
+router.post("/allocate-resources", resourceAllocationController.allocateResources);
+
 module.exports = router;

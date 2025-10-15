@@ -1,29 +1,28 @@
+// backend/controllers/scheduleController.js
 const ScheduleFactory = require("../factories/ScheduleFactory");
 const ScheduleRepository = require("../repositories/ScheduleRepository");
 const WasteRequest = require("../models/WasteRequest");
 const ScheduleService = require("../services/ScheduleService");
 
-// Create a new schedule for garbage collectors
 exports.createSchedule = async (req, res) => {
   try {
     const { collectorId, centerId, vehicleId, date, time, selectedRequests } =
       req.body;
 
-    // Validate input
-    if (
-      !collectorId ||
-      !centerId ||
-      !vehicleId ||
-      !date ||
-      !time ||
-      !selectedRequests
-    ) {
+    // --- Strict input validation ---
+    if (!collectorId || !centerId || !vehicleId || !date || !time) {
       return res
         .status(400)
-        .json({ message: "All fields and selected requests are required." });
+        .json({ message: "collectorId, centerId, vehicleId, date and time are required." });
     }
 
-    // Use service to validate collector, center, and vehicle existence
+    if (!Array.isArray(selectedRequests) || selectedRequests.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Select at least one pending waste request." });
+    }
+
+    // Validate collector/center/vehicle existence via service
     const { isValid, message } = await ScheduleService.validateEntities(
       collectorId,
       centerId,
@@ -33,7 +32,7 @@ exports.createSchedule = async (req, res) => {
       return res.status(400).json({ message });
     }
 
-    // Check if a schedule already exists for the same time and date
+    // Prevent double booking (same collector/date/time)
     const existingSchedule = await ScheduleRepository.findByCollectorDateTime(
       collectorId,
       date,
@@ -41,12 +40,11 @@ exports.createSchedule = async (req, res) => {
     );
     if (existingSchedule) {
       return res.status(409).json({
-        message:
-          "A schedule already exists for this collector at the specified date and time.",
+        message: "A schedule already exists for this collector at the selected date and time.",
       });
     }
 
-    // Validate and update selected requests (ensure all exist and are 'pending')
+    // Ensure every selected request exists AND is still pending
     const requests = await WasteRequest.find({
       _id: { $in: selectedRequests },
       status: "pending",
@@ -58,13 +56,13 @@ exports.createSchedule = async (req, res) => {
       });
     }
 
-    // Update the status of the selected requests to 'scheduled'
+    // Mark selected requests as scheduled
     await WasteRequest.updateMany(
       { _id: { $in: selectedRequests } },
       { $set: { status: "scheduled" } }
     );
 
-    // Create a new schedule using the factory pattern
+    // Create the schedule with attached requests
     const newSchedule = await ScheduleFactory.createSchedule({
       collector: collectorId,
       center: centerId,
@@ -80,9 +78,12 @@ exports.createSchedule = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating schedule:", error);
-    return res.status(500).json({ message: "Error creating schedule.", error });
+    return res
+      .status(500)
+      .json({ message: "Error creating schedule.", error });
   }
 };
+
 
 // Get all schedules for a specific collector
 exports.getCollectorSchedules = async (req, res) => {
@@ -119,7 +120,6 @@ exports.getAllSchedules = async (req, res) => {
   }
 };
 
-// Get schedules by collection center
 exports.getSchedulesByCenter = async (req, res) => {
   try {
     const { centerId } = req.params;
@@ -128,21 +128,14 @@ exports.getSchedulesByCenter = async (req, res) => {
     }
 
     const schedules = await ScheduleRepository.findByCenter(centerId);
-    if (!schedules.length) {
-      return res
-        .status(404)
-        .json({ message: "No schedules found for this center." });
-    }
 
-    return res.status(200).json(schedules);
+    // ✅ 200, never 404
+    return res.status(200).json(Array.isArray(schedules) ? schedules : []);
   } catch (error) {
     console.error("Error fetching schedules:", error);
-    return res
-      .status(500)
-      .json({ message: "Error fetching schedules.", error });
+    return res.status(500).json({ message: "Error fetching schedules.", error });
   }
 };
-
 // Update schedule status to 'accepted'
 exports.updateScheduleStatus = async (req, res) => {
   try {

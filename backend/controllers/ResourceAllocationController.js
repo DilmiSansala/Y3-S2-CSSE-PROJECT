@@ -1,62 +1,86 @@
+// backend/controllers/ResourceAllocationController.js
 const CollectionCenter = require("../models/Center");
+const WasteRequest = require("../models/WasteRequest");
+
+// tune as needed
+const TRUCK_CAPACITY_KG = 1000; // 1 truck per 1000 kg
+const STAFF_PER_TRUCK   = 2;    // 2 staff per truck
 
 exports.allocateResources = async (req, res) => {
   try {
-    // Fetch all collection centers from the database
-    const collectionCenters = await CollectionCenter.find({});
+    // 1) total quantity per center (handle legacy string/number quantities)
+    const sums = await WasteRequest.aggregate([
+      { $match: { collectionCenter: { $ne: null } } },
+      {
+        $group: {
+          _id: "$collectionCenter",
+          totalQuantity: {
+            $sum: {
+              $cond: [
+                { $isNumber: "$quantity" },
+                "$quantity",
+                { $toDouble: "$quantity" }
+              ]
+            }
+          }
+        }
+      }
+    ]);
 
-    if (!collectionCenters || collectionCenters.length === 0) {
-      return res.status(404).json({ message: "No collection centers found." });
-    }
+    const totalsById = new Map(sums.map(x => [String(x._id), x.totalQuantity || 0]));
 
-    // Declare updatedCenters array outside the loop
-    const updatedCenters = [];
+    // 2) load centers and save allocatedResources
+    const centers = await CollectionCenter.find({}).lean(false); // need real docs to save
+    const out = [];
 
-    // Loop through each center and allocate resources based on totalQuantity
-    for (const center of collectionCenters) {
-      // Ensure allocatedResources exist and have required properties
-      center.allocatedResources = {
-        trucks: center.allocatedResources?.trucks || 0,
-        staff: center.allocatedResources?.staff || 0,
-        totalQuantity: center.allocatedResources?.totalQuantity || 0
+    for (const c of centers) {
+      const id = String(c._id);
+      const totalQty = totalsById.get(id) || 0;
+
+      // compute need based on demand
+      const trucksNeeded = Math.ceil(totalQty / TRUCK_CAPACITY_KG);
+      const staffNeeded  = trucksNeeded * STAFF_PER_TRUCK;
+
+      // cap by available resources if you set them on center.resources
+      const maxTrucks = Number(c.resources?.trucks ?? trucksNeeded);
+      const maxStaff  = Number(c.resources?.staff  ?? staffNeeded);
+
+      // 🚫 DO NOT reduce below current allocated amounts
+      const existingTrucks = Number(c.allocatedResources?.trucks || 0);
+      const existingStaff  = Number(c.allocatedResources?.staff  || 0);
+
+      const trucksFinal = Math.max(
+        existingTrucks,
+        Math.min(maxTrucks, trucksNeeded)
+      );
+      const staffFinal  = Math.max(
+        existingStaff,
+        Math.min(maxStaff,  staffNeeded)
+      );
+
+      c.allocatedResources = {
+        trucks: trucksFinal,
+        staff:  staffFinal,
+        totalQuantity: Number(totalQty) || 0
       };
 
-      const totalQuantity = center.allocatedResources.totalQuantity;
+      await c.save();
 
-      // Allocation logic: 1 truck and 2 staff per 1000kg
-      let trucks = Math.ceil(totalQuantity / 1000); // Round up to ensure enough trucks
-      let staff = trucks * 2; // 2 staff for each truck
-
-      // Update the allocated resources in the collection center
-      center.allocatedResources.trucks = trucks;
-      center.allocatedResources.staff = staff;
-
-      // Check if status exists before trying to read it
-      if (!center.status) {
-        console.warn(`Center with name ${center.name} does not have a status.`);
-      } else {
-        console.log(`Center status is: ${center.status}`);
-      }
-
-      // Add updated center data to the array
-      updatedCenters.push({
-        centerName: center.name,
-        trucksAllocated: trucks,
-        staffAllocated: staff,
-        totalQuantity: totalQuantity
+      out.push({
+        centerId: id,
+        centerName: c.name,
+        trucksAllocated: c.allocatedResources.trucks,
+        staffAllocated: c.allocatedResources.staff,
+        totalQuantity: c.allocatedResources.totalQuantity
       });
-
-      // Save changes to the database
-      await center.save();
     }
 
-    // Return success response
-    return res.status(200).json({
-      message: "Resources allocated successfully based on total quantity.",
-      centers: updatedCenters
+    return res.status(200).json({ message: "Resources allocated.", centers: out });
+  } catch (err) {
+    console.error("allocateResources error:", err);
+    return res.status(500).json({
+      message: "Failed to allocate resources.",
+      error: String(err?.message || err)
     });
-  } catch (error) {
-    console.error("Error allocating resources:", error.message, error.stack);
-    res.status(500).json({ message: "Failed to allocate resources.", error });
   }
 };
