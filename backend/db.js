@@ -14,7 +14,7 @@ class Database {
 
   async connect() {
     if (!this.connection) {
-      const uri = process.env.MONGODB_URL || 'mongodb+srv://dilmi:12345@dilmi.3dafe9g.mongodb.net/';
+      const uri = process.env.MONGODB_URL || 'mongodb+srv://it22157232_db_user:1234@wastemanagement.2g4zqmg.mongodb.net/?retryWrites=true&w=majority&appName=wasteManagement';
 
       if (!uri) {
         console.error("MONGODB_URL is not defined in the environment variables.");

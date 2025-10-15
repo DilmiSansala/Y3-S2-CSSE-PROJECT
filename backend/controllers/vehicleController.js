@@ -1,23 +1,20 @@
+// backend/controllers/vehicleController.js
 const Vehicle = require("../models/Vehicle");
 
 // Create a new vehicle
 exports.createVehicle = async (req, res) => {
   try {
     const { name, licensePlate, centerId } = req.body;
+    if (!name || !licensePlate || !centerId) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
 
-    const newVehicle = new Vehicle({
-      name,
-      licensePlate,
-      centerId,
-    });
-
+    const newVehicle = new Vehicle({ name, licensePlate, centerId });
     await newVehicle.save();
-    res
-      .status(201)
-      .json({ message: "Vehicle created successfully.", vehicle: newVehicle });
+
+    res.status(201).json({ message: "Vehicle added successfully", vehicle: newVehicle });
   } catch (error) {
-    console.error("Error creating vehicle:", error);
-    res.status(500).json({ message: "Error creating vehicle.", error });
+    res.status(500).json({ message: "Error adding vehicle", error });
   }
 };
 
@@ -88,21 +85,17 @@ exports.deleteVehicle = async (req, res) => {
   }
 };
 
-// Get vehicles by centerId (passed as URL parameter)
+// ✅ Always return 200 with an array (even if empty)
 exports.getVehiclesByCenter = async (req, res) => {
-  const { centerId } = req.params; // Retrieve centerId from the URL parameter
-
   try {
-    // Find vehicles that match the provided centerId
-    const vehicles = await Vehicle.find({ centerId: centerId });
-
-    if (!vehicles.length) {
-      return res
-        .status(404)
-        .json({ message: "No vehicles found for this center." });
+    const { centerId } = req.params;
+    if (!centerId) {
+      return res.status(400).json({ message: "Center ID is required." });
     }
 
-    res.status(200).json(vehicles);
+    // Vehicle model uses `centerId` as a STRING field
+    const vehicles = await Vehicle.find({ centerId });
+    return res.status(200).json(Array.isArray(vehicles) ? vehicles : []);
   } catch (error) {
     console.error("Error fetching vehicles:", error);
     res.status(500).json({ message: "Error fetching vehicles.", error });
