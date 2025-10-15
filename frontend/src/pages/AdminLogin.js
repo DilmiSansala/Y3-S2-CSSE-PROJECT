@@ -11,71 +11,91 @@ const AdminLogin = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error message
+    setError("");
 
     try {
-      const res = await axios.post(
-        "http://localhost:3050/api/auth/admin/login",
-        {
-          email,
-          password
-        }
-      );
+      const res = await axios.post("http://localhost:3050/api/auth/login", {
+        email,
+        password,
+      });
 
-      // Save the token to localStorage
-      localStorage.setItem("token", res.data.token);
-
-      // Navigate to the admin dashboard
-      navigate("/admin-dashboard");
+      if (res.status === 200 && res.data?.token) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("role", res.data?.user?.role || "admin");
+        navigate("/admin-dashboard");
+      } else {
+        setError("Invalid email or password.");
+      }
     } catch (err) {
       setError("Invalid email or password.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 shadow-lg rounded-lg">
-        <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+    <div className="min-h-screen bg-emerald-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <h2 className="text-3xl font-extrabold tracking-tight text-center text-emerald-800 mb-6">
           Admin Login
         </h2>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-600 mb-2 text-sm">
-              Email
+
+        <div className="bg-white border border-emerald-100 rounded-2xl shadow-xl shadow-emerald-900/5 p-6 sm:p-8">
+          {error && (
+            <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <label className="block">
+              <span className="block text-sm font-medium text-emerald-900 mb-1">
+                Email
+              </span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@zerowaste.gov"
+                className="w-full rounded-xl border border-emerald-200 bg-white/80
+                           px-4 py-2.5 text-emerald-900 placeholder-emerald-800/40
+                           outline-none ring-2 ring-transparent transition
+                           focus:border-emerald-500 focus:ring-emerald-200"
+                required
+              />
             </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-gray-600 mb-2 text-sm"
+
+            <label className="block">
+              <span className="block text-sm font-medium text-emerald-900 mb-1">
+                Password
+              </span>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full rounded-xl border border-emerald-200 bg-white/80
+                           px-4 py-2.5 text-emerald-900 placeholder-emerald-800/40
+                           outline-none ring-2 ring-transparent transition
+                           focus:border-emerald-500 focus:ring-emerald-200"
+                required
+              />
+            </label>
+
+            <button
+              type="submit"
+              className="w-full mt-2 inline-flex items-center justify-center rounded-xl
+                         bg-emerald-700 px-4 py-3 font-semibold text-white
+                         shadow-md shadow-emerald-900/10 transition
+                         hover:bg-emerald-800 focus:outline-none focus-visible:ring-2
+                         focus-visible:ring-emerald-400"
             >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg"
-          >
-            Login
-          </button>
-        </form>
+              Login
+            </button>
+          </form>
+        </div>
+
+        <p className="mt-6 text-center text-xs text-emerald-800/60">
+          ZeroWaste • secure access
+        </p>
       </div>
     </div>
   );

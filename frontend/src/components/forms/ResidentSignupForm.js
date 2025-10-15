@@ -37,6 +37,7 @@ const ResidentSignupForm = () => {
   // Handle form submission
   const onSubmit = async (e) => {
     e.preventDefault();
+    
 
     // Validation checks
     if (form.password !== form.confirmPassword) {
@@ -61,7 +62,7 @@ const ResidentSignupForm = () => {
       if (response.ok) {
         localStorage.setItem('token', data.token);
         setError(''); // Clear any existing error
-        navigate('/'); // Redirect to the home page
+        navigate('/resident-login'); // Redirect to the home page
       } else {
         setError(data.message || ERROR_MESSAGES.signupFailed);
       }
