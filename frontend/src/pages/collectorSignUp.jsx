@@ -21,6 +21,7 @@ const CollectorSignUp = () => {
         password,
         city,
       });
+      
 
       if (res.status === 201) {
         alert("Collector registered successfully!");
