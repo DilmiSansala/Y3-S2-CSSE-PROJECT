@@ -40,7 +40,7 @@ function CollectorHeader() {
 
   const handleLogout = () => {
     logout();
-    navigate("/collector-signin");
+    navigate("/");
   };
 
   return (
