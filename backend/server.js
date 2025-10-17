@@ -43,6 +43,8 @@ app.use("/api/centers", centerRoutes); // Center routes
 app.use("/api/schedule", scheduleRoutes); // Scheduling routes
 app.use("/api/vehicles", vehicleRoutes);
 
+
+
 // 404 error handling for unknown routes
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });
