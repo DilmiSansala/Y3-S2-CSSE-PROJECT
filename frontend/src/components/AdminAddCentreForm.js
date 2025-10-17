@@ -74,7 +74,7 @@ const AdminAddCentreForm = ({ onCenterAdded, editCenter }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <h2 className="text-xl font-bold mb-4">
-        {editCenter ? "Edit Collection Centre" : "Add Collection Centre"}
+        {editCenter ? "Edit Collection Center" : "Add Collection Center"}
       </h2>
       {error && <div className="text-red-600">{error}</div>}
 
