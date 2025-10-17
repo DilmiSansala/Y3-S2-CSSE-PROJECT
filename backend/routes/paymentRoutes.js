@@ -9,6 +9,8 @@ router.get("/confirm", paymentController.confirmCheckoutSession);
 
 // Legacy direct process (non-Stripe) - keep if needed by frontend
 router.post("/process", paymentController.processPayment);
+// Manual approve endpoint
+router.post('/approve', paymentController.approvePayment);
 
 module.exports = router;
 
